@@ -2,25 +2,24 @@
 logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Dependency directories
-node_modules/
+node_modules
+dist
+dist-ssr
+*.local
 
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Environment variables
-.env
-
-# IDE files
-.idea/
-.vscode/
-
-# MacOS files
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-
-# Build directory
-dist/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
