@@ -18,6 +18,9 @@ const existingEmail=await UserModel.findOne({email})
 if(existingEmail){
     return res.status(400).json({error:"Email is already exist"})
 }
+if(password.length<6){
+    return res.status(400).json({error:"Password must be at least 6 characters long"})
+}
 const salt=await bcrypt.genSalt(10);
 const hashPassword=await bcrypt.hash(password,salt);
     const newUser=new UserModel({
@@ -48,12 +51,35 @@ res.status(400).json({error:"Invalid user data"})
 }
 }
 export const login=async (req,res)=>{
-    res.json({
-        data:"login endpoint"
-    })
+  try {
+const {username,password}=req.body;
+const user=await UserModel.findOne({username});
+const isPasswordCorrect=await bcrypt.compare(password,user?.password || "");
+    if(!user || !isPasswordCorrect){
+        return res.status(400).json({error:"Invalid userName or password"});
+    }
+        generateTokenAndSetCookie(user._id,res);
+        res.status(200).json({
+            _id:user._id,
+            fullName:user.fullName,
+            email:user.email,
+            followers:user.followers,
+            following:user.following,
+            profileImg:user.profileImg,
+            coverImg:user.coverImg
+        });
+    
+  } catch (error) {
+    console.log("Error in login controller",error.message)
+    res.status(500).json({error:'Internal Server Error'});
+  }
 }
 export const logout=async (req,res)=>{
-    res.json({
-        data:"logout endpoint"
-    })
+try {
+    res.cookie("jwt","",{maxAge:0})
+    res.status(200).json({message:"Logged out successfully"})
+} catch (error) {
+    console.log("Error in logout controller",error.message)
+    res.status(500).json({error:"Internal Server Error"})
+}
 }
